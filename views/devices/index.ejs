@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/css/main.css">
+  <script defer src="/js/devices.js"></script>
+</head>
+<body>
+  <%- include('../shared/header', { active: 'devices' }) %>
+  <main class="apple-shell">
+    <section class="section-heading">
+      <p class="eyebrow">Devices</p>
+      <h1>Listado y gestión de inventario</h1>
+      <% if (category) { %>
+        <p class="subtitle">Filtro activo: <%= category %></p>
+      <% } %>
+    </section>
+
+    <section class="card device-form-card">
+      <div class="card-copy">
+        <h2>Registrar nuevo dispositivo</h2>
+        <p>Este formulario usa el contrato API <strong>POST /api/v1/devices</strong>.</p>
+      </div>
+
+      <form id="deviceCreateForm" class="device-form" novalidate>
+        <div class="form-grid">
+          <label>
+            Modelo
+            <input name="model_name" type="text" required maxlength="100" placeholder='Mac Studio M3 Ultra'>
+          </label>
+
+          <label>
+            Categoría
+            <select name="category" required>
+              <option value="">Selecciona...</option>
+              <option value="Mac">Mac</option>
+              <option value="iPad">iPad</option>
+              <option value="iPhone">iPhone</option>
+              <option value="Audio">Audio</option>
+              <option value="Displays">Displays</option>
+            </select>
+          </label>
+
+          <label>
+            Serial
+            <input name="serial_number" type="text" required maxlength="100" placeholder='C02MX5K0Q09A'>
+          </label>
+
+          <label>
+            Precio de compra
+            <input name="purchase_price" type="number" required min="1" step="0.01" placeholder="19999000.00">
+          </label>
+
+          <label>
+            Fecha de compra
+            <input name="purchase_date" type="date" required>
+          </label>
+        </div>
+
+        <label>
+          Especificaciones (JSON opcional)
+          <textarea name="specifications" rows="4" placeholder='{"ram":"128GB","ssd":"2TB"}'></textarea>
+        </label>
+
+        <div class="device-form__actions">
+          <button class="btn-apple" type="submit">Guardar dispositivo</button>
+          <p id="deviceFormMessage" class="form-message" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
+    <section class="grid grid--cards">
+      <% devices.forEach((device) => { %>
+        <article class="card device-card">
+          <div class="device-card__meta"><%= device.category %></div>
+          <h2><%= device.model_name %></h2>
+          <p><%= device.serial_number %></p>
+          <p>$<%= Number(device.purchase_price).toLocaleString('es-CO') %></p>
+        </article>
+      <% }) %>
+    </section>
+  </main>
+  <%- include('../shared/footer') %>
+</body>
+</html>

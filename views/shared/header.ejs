@@ -1,0 +1,21 @@
+<header class="topbar">
+  <div class="apple-shell topbar__inner">
+    <a class="brand" href="/">Aura</a>
+    <nav class="nav">
+      <a href="/" class="<%= active === 'home' ? 'is-active' : '' %>">Inicio</a>
+      <a
+        href="/dashboard"
+        class="<%= active === 'dashboard' ? 'is-active' : '' %>"
+        >Dashboard</a
+      >
+      <a href="/devices" class="<%= active === 'devices' ? 'is-active' : '' %>"
+        >Devices</a
+      >
+      <a
+        href="/analytics"
+        class="<%= active === 'analytics' ? 'is-active' : '' %>"
+        >Analytics</a
+      >
+    </nav>
+  </div>
+</header>

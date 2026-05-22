@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/css/main.css">
+  <script defer src="/vendor/chart.umd.min.js"></script>
+  <script defer src="/js/charts.js"></script>
+</head>
+<body>
+  <%- include('shared/header', { active: 'analytics' }) %>
+  <main class="apple-shell">
+    <section class="section-heading">
+      <p class="eyebrow">Analytics</p>
+      <h1>Reportes obligatorios de valor y rotación</h1>
+    </section>
+
+    <section class="card analytics-chart-card">
+      <div class="card-copy">
+        <h2>Valor del inventario por periodo</h2>
+        <p>Serie histórica agregada con visualización monocromática de bajo contraste.</p>
+      </div>
+      <canvas id="valuationChart" data-chart='<%- JSON.stringify(valuation) %>'></canvas>
+    </section>
+
+    <section class="card analytics-table-card">
+      <div class="card-copy">
+        <h2>Matriz de rotación y salud</h2>
+        <p>Lectura compacta de transiciones y soporte por categoría.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="apple-clean-table">
+          <thead>
+            <tr>
+              <th>Categoría</th>
+              <th>Unidades Totales</th>
+              <th>Ratio de Asignación</th>
+              <th>Costo de Soporte</th>
+              <th>Incidentes</th>
+              <th>Estado del Hardware</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% rotation.forEach((row) => { %>
+              <tr>
+                <td class="font-weight-medium"><%= row.categoria %></td>
+                <td><%= row.inventario_total %></td>
+                <td><%= row.ratio_asignacion_pct ?? 0 %>%</td>
+                <td class="font-numeric">$<%= Number(row.costo_total_soporte || 0).toLocaleString('es-CO') %> COP</td>
+                <td><%= row.cantidad_incidentes_historicos %></td>
+                <td><span class="badge badge-<%= row.estado_alerta === 'Saludable' ? 'success' : row.estado_alerta === 'Estable' ? 'warning' : 'danger' %>"><%= row.estado_alerta %></span></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <%- include('shared/footer') %>
+</body>
+</html>

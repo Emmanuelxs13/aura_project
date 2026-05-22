@@ -1,0 +1,20 @@
+{
+  "name": "aura-project",
+  "version": "1.0.0",
+  "description": "Sistema MVC SSR con PostgreSQL y analitica para inventario premium.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('shared/header', { active: 'dashboard' }) %>
+  <main class="apple-shell">
+    <section class="section-heading">
+      <p class="eyebrow">Dashboard</p>
+      <h1>Panel principal de inventario</h1>
+    </section>
+
+    <section class="kpi-grid">
+      <article class="card kpi-card"><span>Total de dispositivos</span><strong><%= devices.length %></strong></article>
+      <article class="card kpi-card"><span>En catálogo</span><strong><%= devices.filter((device) => device.status === 'Available').length %></strong></article>
+      <article class="card kpi-card"><span>Asignados</span><strong><%= devices.filter((device) => device.status === 'Assigned').length %></strong></article>
+    </section>
+
+    <section class="grid grid--cards">
+      <% devices.forEach((device) => { %>
+        <article class="card device-card">
+          <div class="device-card__meta"><%= device.category %></div>
+          <h2><%= device.model_name %></h2>
+          <p><%= device.status %> · $<%= Number(device.purchase_price).toLocaleString('es-CO') %></p>
+        </article>
+      <% }) %>
+    </section>
+  </main>
+  <%- include('shared/footer') %>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('shared/header', { active: 'home' }) %>
+  <main class="apple-shell">
+    <section class="hero card card--hero">
+      <p class="eyebrow">Aura Colombia</p>
+      <h1>Inventario premium con estética Apple y control SSR.</h1>
+      <p class="hero-copy">Gestiona dispositivos, reportes y trazabilidad con una interfaz limpia, precisa y lista para evaluación técnica.</p>
+      <div class="hero-actions">
+        <a class="btn-apple" href="/dashboard">Abrir dashboard</a>
+        <a class="btn-link" href="/analytics">Ver analytics</a>
+      </div>
+    </section>
+
+    <section class="grid grid--cards">
+      <% devices.forEach((device) => { %>
+        <article class="card device-card">
+          <div class="device-card__meta"><%= device.category %></div>
+          <h2><%= device.model_name %></h2>
+          <p><%= device.serial_number %></p>
+          <p class="device-card__status"><%= device.status %></p>
+        </article>
+      <% }) %>
+    </section>
+  </main>
+  <%- include('shared/footer') %>
+</body>
+</html>
