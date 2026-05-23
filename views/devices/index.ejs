@@ -5,79 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= pageTitle %></title>
   <link rel="stylesheet" href="/css/main.css">
-  <script defer src="/js/devices.js"></script>
+  <script defer src="/js/catalog.js"></script>
 </head>
 <body>
-  <%- include('../shared/header', { active: 'devices' }) %>
+  <%- include('../shared/header', { active: 'shop' }) %>
   <main class="apple-shell">
     <section class="section-heading">
-      <p class="eyebrow">Devices</p>
-      <h1>Listado y gestión de inventario</h1>
+      <p class="eyebrow">Tienda</p>
+      <h1>Catalogo completo inspirado en Apple</h1>
+      <p class="subtitle">Explora productos, filtra por categoria y agrega unidades a la bolsa.</p>
       <% if (category) { %>
         <p class="subtitle">Filtro activo: <%= category %></p>
       <% } %>
     </section>
 
-    <section class="card device-form-card">
-      <div class="card-copy">
-        <h2>Registrar nuevo dispositivo</h2>
-        <p>Este formulario usa el contrato API <strong>POST /api/v1/devices</strong>.</p>
-      </div>
-
-      <form id="deviceCreateForm" class="device-form" novalidate>
-        <div class="form-grid">
-          <label>
-            Modelo
-            <input name="model_name" type="text" required maxlength="100" placeholder='Mac Studio M3 Ultra'>
-          </label>
-
-          <label>
-            Categoría
-            <select name="category" required>
-              <option value="">Selecciona...</option>
-              <option value="Mac">Mac</option>
-              <option value="iPad">iPad</option>
-              <option value="iPhone">iPhone</option>
-              <option value="Audio">Audio</option>
-              <option value="Displays">Displays</option>
-            </select>
-          </label>
-
-          <label>
-            Serial
-            <input name="serial_number" type="text" required maxlength="100" placeholder='C02MX5K0Q09A'>
-          </label>
-
-          <label>
-            Precio de compra
-            <input name="purchase_price" type="number" required min="1" step="0.01" placeholder="19999000.00">
-          </label>
-
-          <label>
-            Fecha de compra
-            <input name="purchase_date" type="date" required>
-          </label>
-        </div>
-
-        <label>
-          Especificaciones (JSON opcional)
-          <textarea name="specifications" rows="4" placeholder='{"ram":"128GB","ssd":"2TB"}'></textarea>
-        </label>
-
-        <div class="device-form__actions">
-          <button class="btn-apple" type="submit">Guardar dispositivo</button>
-          <p id="deviceFormMessage" class="form-message" aria-live="polite"></p>
-        </div>
+    <section class="shop-toolbar card">
+      <form class="shop-toolbar__search" method="get" action="/shop">
+          <input id="catalogSearchInput" type="text" name="search" value="<%= search %>" placeholder="Buscar iPhone, Mac, AirPods..." aria-label="Buscar productos">
+        <button class="btn-apple" type="submit">Buscar</button>
       </form>
+        <div
+          id="catalogSuggestions"
+          class="shop-toolbar__suggestions"
+          data-endpoint="/api/v1/products/search"
+          aria-live="polite"
+          hidden
+        ></div>
+      <div class="shop-toolbar__chips">
+        <a class="chip" href="/shop">Todo</a>
+        <a class="chip" href="/shop?category=Mac">Mac</a>
+        <a class="chip" href="/shop?category=iPhone">iPhone</a>
+        <a class="chip" href="/shop?category=iPad">iPad</a>
+        <a class="chip" href="/shop?category=Audio">Audio</a>
+        <a class="chip" href="/shop?category=Displays">Displays</a>
+        <a class="chip" href="/shop?category=Accessories">Accessories</a>
+      </div>
+    </section>
+
+    <section class="shop-summary">
+      <p class="subtitle"><strong><%= products.length %></strong> productos en catalogo</p>
+      <div class="shop-summary__meta">
+        <% if (search) { %>
+          Resultados para "<%= search %>"
+        <% } else { %>
+          Coleccion completa con disponibilidad en tiempo real
+        <% } %>
+      </div>
     </section>
 
     <section class="grid grid--cards">
-      <% devices.forEach((device) => { %>
-        <article class="card device-card">
-          <div class="device-card__meta"><%= device.category %></div>
-          <h2><%= device.model_name %></h2>
-          <p><%= device.serial_number %></p>
-          <p>$<%= Number(device.purchase_price).toLocaleString('es-CO') %></p>
+      <% products.forEach((product) => { %>
+        <article class="card product-card product-card--<%= product.category.toLowerCase() %>">
+          <p class="device-card__meta"><%= product.category %> · <%= product.colorway %></p>
+          <h2><a href="/product/<%= product.slug %>"><%= product.name %></a></h2>
+          <p class="subtitle"><%= product.tagline %></p>
+          <p class="font-numeric">$<%= Number(product.price).toLocaleString('es-CO') %> COP</p>
+          <form method="post" action="/cart/items" class="product-card__actions">
+            <input type="hidden" name="productId" value="<%= product.id %>">
+            <input type="hidden" name="quantity" value="1">
+            <button class="btn-link" type="submit">Agregar a la bolsa</button>
+          </form>
         </article>
       <% }) %>
     </section>

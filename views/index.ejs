@@ -8,26 +8,52 @@
 </head>
 <body>
   <%- include('shared/header', { active: 'home' }) %>
-  <main class="apple-shell">
-    <section class="hero card card--hero">
-      <p class="eyebrow">Aura Colombia</p>
-      <h1>Inventario premium con estética Apple y control SSR.</h1>
-      <p class="hero-copy">Gestiona dispositivos, reportes y trazabilidad con una interfaz limpia, precisa y lista para evaluación técnica.</p>
+  <main>
+    <section class="apple-shell hero hero--home card card--hero">
+      <p class="eyebrow">Aura Store · Apple-inspired ecommerce</p>
+      <h1>Una tienda elegante, directa y lista para vender productos premium.</h1>
+      <p class="hero-copy">Construida sobre SSR, PostgreSQL y sesiones, con login diferenciado para cliente y admin, carrito real y panel operativo.</p>
       <div class="hero-actions">
-        <a class="btn-apple" href="/dashboard">Abrir dashboard</a>
-        <a class="btn-link" href="/analytics">Ver analytics</a>
+        <a class="btn-apple" href="/shop">Comprar ahora</a>
+        <a class="btn-link" href="/login">Iniciar sesión</a>
       </div>
     </section>
 
-    <section class="grid grid--cards">
-      <% devices.forEach((device) => { %>
-        <article class="card device-card">
-          <div class="device-card__meta"><%= device.category %></div>
-          <h2><%= device.model_name %></h2>
-          <p><%= device.serial_number %></p>
-          <p class="device-card__status"><%= device.status %></p>
+    <section class="apple-shell feature-strip">
+      <div class="feature-strip__item card"><span>Productos</span><strong><%= summary.total_products %></strong></div>
+      <div class="feature-strip__item card"><span>Usuarios</span><strong><%= summary.total_users %></strong></div>
+      <div class="feature-strip__item card"><span>Pedidos</span><strong><%= summary.total_orders %></strong></div>
+      <div class="feature-strip__item card"><span>Ingresos</span><strong>$<%= Number(summary.total_revenue || 0).toLocaleString('es-CO') %></strong></div>
+    </section>
+
+    <section class="apple-shell section-heading">
+      <p class="eyebrow">Destacados</p>
+      <h2>Lo mejor del catálogo</h2>
+    </section>
+
+    <section class="apple-shell grid grid--cards">
+      <% featuredProducts.forEach((product) => { %>
+        <article class="card product-card product-card--<%= product.category.toLowerCase() %>">
+          <p class="device-card__meta"><%= product.category %> · <%= product.colorway %></p>
+          <h2><a href="/product/<%= product.slug %>"><%= product.name %></a></h2>
+          <p class="subtitle"><%= product.tagline %></p>
+          <p class="font-numeric">$<%= Number(product.price).toLocaleString('es-CO') %> COP</p>
+          <a class="btn-link" href="/product/<%= product.slug %>">Ver producto</a>
         </article>
       <% }) %>
+    </section>
+
+    <section class="apple-shell promo-grid">
+      <article class="card promo-card promo-card--dark">
+        <p class="eyebrow">Checkout</p>
+        <h2>Carrito con pedido real</h2>
+        <p class="subtitle">Las compras generan pedidos en la base de datos y actualizan el stock de producto.</p>
+      </article>
+      <article class="card promo-card promo-card--light">
+        <p class="eyebrow">Admin</p>
+        <h2>Panel para operar inventario</h2>
+        <p class="subtitle">Crea productos, revisa pedidos y monitorea ingresos desde un unico acceso protegido.</p>
+      </article>
     </section>
   </main>
   <%- include('shared/footer') %>

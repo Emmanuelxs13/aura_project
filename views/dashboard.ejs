@@ -10,22 +10,24 @@
   <%- include('shared/header', { active: 'dashboard' }) %>
   <main class="apple-shell">
     <section class="section-heading">
-      <p class="eyebrow">Dashboard</p>
-      <h1>Panel principal de inventario</h1>
+      <p class="eyebrow">Cuenta</p>
+      <h1>Tu historial y estado de compras</h1>
+      <p class="subtitle">Vista personalizada para el usuario autenticado y acceso rapido a sus pedidos.</p>
     </section>
 
     <section class="kpi-grid">
-      <article class="card kpi-card"><span>Total de dispositivos</span><strong><%= devices.length %></strong></article>
-      <article class="card kpi-card"><span>En catálogo</span><strong><%= devices.filter((device) => device.status === 'Available').length %></strong></article>
-      <article class="card kpi-card"><span>Asignados</span><strong><%= devices.filter((device) => device.status === 'Assigned').length %></strong></article>
+      <article class="card kpi-card"><span>Productos activos</span><strong><%= products.length %></strong></article>
+      <article class="card kpi-card"><span>Pedidos realizados</span><strong><%= orders.length %></strong></article>
+      <article class="card kpi-card"><span>Ingresos globales</span><strong>$<%= Number(overview.total_revenue || 0).toLocaleString('es-CO') %></strong></article>
     </section>
 
     <section class="grid grid--cards">
-      <% devices.forEach((device) => { %>
+      <% orders.forEach((order) => { %>
         <article class="card device-card">
-          <div class="device-card__meta"><%= device.category %></div>
-          <h2><%= device.model_name %></h2>
-          <p><%= device.status %> · $<%= Number(device.purchase_price).toLocaleString('es-CO') %></p>
+          <div class="device-card__meta">Pedido #<%= order.id %></div>
+          <h2><%= order.status %></h2>
+          <p><%= new Date(order.created_at).toLocaleDateString('es-CO') %> · $<%= Number(order.total_amount).toLocaleString('es-CO') %></p>
+          <p class="subtitle"><%= order.shipping_name %></p>
         </article>
       <% }) %>
     </section>

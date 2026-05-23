@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('shared/header', { active: 'login' }) %>
+  <main class="apple-shell auth-shell">
+    <section class="hero hero--compact card">
+      <p class="eyebrow">Acceso seguro</p>
+      <h1>Inicia sesión para comprar y administrar Aura Store.</h1>
+      <p class="hero-copy">El flujo distingue clientes y administradores para desbloquear checkout, historial y panel de control.</p>
+    </section>
+
+    <section class="card auth-card">
+      <form class="auth-form" method="post" action="/login">
+        <input type="hidden" name="returnTo" value="<%= returnTo %>">
+        <label>
+          Correo electrónico
+          <input type="email" name="email" required placeholder="client@aura.co">
+        </label>
+        <label>
+          Contraseña
+          <input type="password" name="password" required placeholder="Client123!">
+        </label>
+        <% if (error) { %>
+          <p class="form-message form-message--error"><%= error %></p>
+        <% } %>
+        <div class="device-form__actions">
+          <button class="btn-apple" type="submit">Entrar</button>
+          <a class="btn-link" href="/">Volver al inicio</a>
+        </div>
+        <p class="subtitle auth-hint">Admin: admin@aura.co / Admin123! · Cliente: client@aura.co / Client123!</p>
+      </form>
+    </section>
+  </main>
+  <%- include('shared/footer') %>
+</body>
+</html>

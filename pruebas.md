@@ -147,3 +147,138 @@ Esperado:
 - [ ] Formulario de devices crea registros reales en PostgreSQL.
 - [ ] API analitica responde y la vista analytics renderiza datos.
 - [ ] Validaciones retornan `400` en entradas invalidas.
+
+## 8. Colección de pruebas para Postman / curl (Admin & API)
+
+Notas generales para Postman:
+
+- Usar el tipo de cuerpo `x-www-form-urlencoded` o `form-data` para rutas que provienen de formularios SSR (login, creación de usuarios, dispositivos desde la UI).
+- Habilitar "Automatically follow redirects" si quieres que Postman siga la redirección luego de `/login`.
+- Guardar cookies en la colección: Postman mantiene cookies en la pestaña "Cookies"; tras `POST /login` se establecerá la cookie de sesión usada para rutas admin.
+
+1. Login (obligatorio para operaciones admin)
+
+POST http://localhost:3000/login
+
+Body (x-www-form-urlencoded):
+
+- `email`: admin@example.com
+- `password`: adminpassword
+
+Ejemplo curl (guardar cookies en cookiejar):
+
+```bash
+curl -v -c cookiejar.txt -X POST http://localhost:3000/login \
+  -d "email=admin@example.com" -d "password=adminpassword"
+```
+
+2. Listar auditoría (paginado)
+
+GET http://localhost:3000/admin/audit?q=&page=1&pageSize=50
+
+curl con cookies:
+
+```bash
+curl -b cookiejar.txt "http://localhost:3000/admin/audit?q=&page=1&pageSize=50"
+```
+
+3. Crear dispositivo (desde Admin UI)
+
+POST http://localhost:3000/admin/devices
+
+Body (x-www-form-urlencoded):
+
+- `model_name`, `category`, `serial_number`, `purchase_price`, `purchase_date` (YYYY-MM-DD), `specifications` (string JSON)
+
+Ejemplo curl:
+
+```bash
+curl -b cookiejar.txt -X POST http://localhost:3000/admin/devices \
+  -d "model_name=Test Device X" \
+  -d "category=Mac" \
+  -d "serial_number=SN123456789" \
+  -d "purchase_price=1299900" \
+  -d "purchase_date=2026-05-22" \
+  -d "specifications={\"ram\":\"32GB\"}"
+```
+
+4. Editar dispositivo
+
+POST http://localhost:3000/admin/devices/:deviceId
+
+Body: incluir los campos a actualizar (`model_name`, `assigned_to`, `status`, `purchase_price`, `specifications`)
+
+Ejemplo curl:
+
+```bash
+curl -b cookiejar.txt -X POST http://localhost:3000/admin/devices/123 \
+  -d "assigned_to=Juan Perez" -d "status=Assigned"
+```
+
+5. Eliminar dispositivo
+
+POST http://localhost:3000/admin/devices/:deviceId/delete
+
+curl:
+
+```bash
+curl -b cookiejar.txt -X POST http://localhost:3000/admin/devices/123/delete
+```
+
+6. Gestionar incidencias (logs)
+
+- Crear incidencia: POST `/admin/devices/:deviceId/logs` (form fields: `code`, `title`, `area`, `maintenance_cost`, `status`, `notes`)
+- Actualizar estado: POST `/admin/devices/:deviceId/logs/:logId/status` (form field `status`)
+- Eliminar incidencia: POST `/admin/devices/:deviceId/logs/:logId/delete`
+
+Ejemplos curl:
+
+```bash
+# Crear incidencia
+curl -b cookiejar.txt -X POST http://localhost:3000/admin/devices/123/logs \
+  -d "title=Falla de pantalla" -d "area=Soporte" -d "maintenance_cost=120000" -d "status=Open"
+
+# Actualizar estado
+curl -b cookiejar.txt -X POST http://localhost:3000/admin/devices/123/logs/456/status -d "status=Resolved"
+
+# Eliminar incidencia
+curl -b cookiejar.txt -X POST http://localhost:3000/admin/devices/123/logs/456/delete
+```
+
+7. Crear usuario admin
+
+POST http://localhost:3000/admin/users
+
+Body (x-www-form-urlencoded): `name`, `email`, `password`, `role` (use `Admin`|`Administrator`|`Operador`|`Auditor`), `status` (`Active`|`Suspended`)
+
+Ejemplo curl:
+
+```bash
+curl -b cookiejar.txt -X POST http://localhost:3000/admin/users \
+  -d "name=Nuevo Admin" -d "email=admin2@example.com" -d "password=secretpass" -d "role=Admin" -d "status=Active"
+```
+
+8. Cambiar rol / estado de usuario
+
+POST `/admin/users/:userId/role` with `role` body
+POST `/admin/users/:userId/status` with `status` body
+
+9. Endpoints públicos / API
+
+- `GET /api/v1/analytics/valuation` (GET)
+- `POST /api/v1/devices` (API create device JSON) — este endpoint es público y acepta JSON body; para Postman usar `raw` > `application/json`.
+
+Ejemplo curl JSON:
+
+```bash
+curl -X POST http://localhost:3000/api/v1/devices \
+  -H "Content-Type: application/json" \
+  -d '{"model_name":"iPhone Test","category":"iPhone","serial_number":"PX-001","purchase_price":4999000,"purchase_date":"2026-05-21","specifications":{"storage":"128GB"}}'
+```
+
+10. Notas sobre cookies y autenticación en Postman
+
+- Usar la pestaña Cookies para confirmar que la cookie de sesión (`connect.sid` o similar) fue establecida.
+- Alternativa: puedes usar `curl -c cookiejar.txt` para capturar cookies y `-b cookiejar.txt` para enviarlas en peticiones subsiguientes.
+
+Si quieres, genero un archivo JSON de colección Postman con estas solicitudes — dime si lo quieres y lo agrego al repo.

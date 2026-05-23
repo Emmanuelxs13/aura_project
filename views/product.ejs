@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/css/main.css">
+  <script type="application/ld+json"><%- JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    sku: product.slug,
+    brand: {
+      "@type": "Brand",
+      name: "Aura Store"
+    },
+    offers: {
+      "@type": "Offer",
+      url: `/product/${product.slug}`,
+      priceCurrency: "COP",
+      price: Number(product.price),
+      availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+    }
+  }) %></script>
+</head>
+<body>
+  <%- include('shared/header', { active: 'shop' }) %>
+  <main class="apple-shell product-shell">
+    <section class="product-hero card product-hero--<%= product.category.toLowerCase() %>">
+      <div class="product-hero__content">
+        <p class="eyebrow"><%= product.category %> · <%= product.colorway %></p>
+        <h1><%= product.name %></h1>
+        <p class="hero-copy"><%= product.tagline %></p>
+        <p class="subtitle"><%= product.description %></p>
+        <div class="hero-actions">
+          <form method="post" action="/cart/items">
+            <input type="hidden" name="productId" value="<%= product.id %>">
+            <input type="hidden" name="quantity" value="1">
+            <button class="btn-apple" type="submit">Agregar a la bolsa</button>
+          </form>
+          <a class="btn-link" href="/cart">Ir al carrito</a>
+        </div>
+      </div>
+      <div class="product-hero__visual">
+        <div class="product-orb"></div>
+        <div class="product-display">
+          <span><%= product.category %></span>
+          <strong><%= product.name %></strong>
+          <p>$<%= Number(product.price).toLocaleString('es-CO') %> COP</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid product-detail-grid">
+      <article class="card product-spec-card">
+        <h2>Especificaciones</h2>
+        <div class="spec-grid">
+          <% Object.entries(product.specifications || {}).forEach(([key, value]) => { %>
+            <div class="spec-item">
+              <span><%= key %></span>
+              <strong><%= value %></strong>
+            </div>
+          <% }) %>
+        </div>
+      </article>
+
+      <article class="card product-spec-card">
+        <h2>Disponibilidad</h2>
+        <p class="subtitle">Stock actual: <strong><%= product.stock %></strong></p>
+        <p class="subtitle">Precio: <strong>$<%= Number(product.price).toLocaleString('es-CO') %> COP</strong></p>
+        <% if (product.compare_at_price) { %>
+          <p class="subtitle">Antes: $<%= Number(product.compare_at_price).toLocaleString('es-CO') %> COP</p>
+        <% } %>
+      </article>
+    </section>
+
+    <section class="section-heading">
+      <p class="eyebrow">Recomendados</p>
+      <h2>Completa tu experiencia</h2>
+    </section>
+    <section class="grid grid--cards">
+      <% recommendations.forEach((item) => { %>
+        <article class="card product-card product-card--compact">
+          <p class="device-card__meta"><%= item.category %></p>
+          <h2><a href="/product/<%= item.slug %>"><%= item.name %></a></h2>
+          <p class="subtitle"><%= item.tagline %></p>
+          <p class="font-numeric">$<%= Number(item.price).toLocaleString('es-CO') %> COP</p>
+        </article>
+      <% }) %>
+    </section>
+  </main>
+  <%- include('shared/footer') %>
+</body>
+</html>

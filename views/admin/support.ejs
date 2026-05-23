@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="admin-app">
+  <% const useAdminLayout = Boolean(isAdmin); %>
+  <% if (!useAdminLayout) { %>
+    <%- include('../shared/header', { active: 'admin' }) %>
+  <% } %>
+  <div class="admin-layout">
+    <input class="admin-nav-toggle" type="checkbox" id="admin-nav-toggle" aria-label="Abrir menu admin">
+    <%- include('../shared/admin-sidebar', { active: 'support' }) %>
+    <div class="admin-panel">
+      <header class="admin-statusbar">
+        <label class="admin-toggle" for="admin-nav-toggle" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </label>
+        <div>
+          <p class="admin-statusbar__eyebrow">Panel Administrativo</p>
+          <h1>Mantenimiento y soporte</h1>
+        </div>
+        <div class="admin-statusbar__actions">
+          <span class="admin-statusbar__user"><%= currentUser ? currentUser.name : 'Administrador' %></span>
+          <button class="btn-apple" type="button">Nueva incidencia</button>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <section class="admin-kpi-grid">
+          <article class="card admin-kpi">
+            <span>Incidencias abiertas</span>
+            <strong><%= incidents.filter((item) => item.status !== 'Resuelto').length %></strong>
+          </article>
+          <article class="card admin-kpi">
+            <span>Costos estimados</span>
+            <strong>$<%= incidents.reduce((sum, item) => sum + item.cost, 0).toLocaleString('es-CO') %></strong>
+          </article>
+          <article class="card admin-kpi">
+            <span>Activos totales</span>
+            <strong><%= summary.total_products %></strong>
+          </article>
+        </section>
+
+        <section class="card admin-activity">
+          <div class="card-copy admin-toolbar">
+            <div>
+              <h2>Registro de incidencias</h2>
+              <p>Seguimiento detallado de costos y tiempos de resolucion.</p>
+            </div>
+            <div class="admin-toolbar__actions">
+              <button class="btn-link" type="button">Exportar reporte</button>
+              <button class="btn-link" type="button">Configurar SLA</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="apple-clean-table">
+              <thead>
+                <tr>
+                  <th>Codigo</th>
+                  <th>Incidencia</th>
+                  <th>Area</th>
+                  <th>Costo</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% incidents.forEach((incident) => { %>
+                  <tr>
+                    <td class="font-weight-medium"><%= incident.code %></td>
+                    <td>
+                      <div class="admin-user">
+                        <span class="font-weight-medium"><%= incident.title %></span>
+                        <span class="admin-meta"><%= incident.opened %></span>
+                      </div>
+                    </td>
+                    <td><span class="admin-pill"><%= incident.area %></span></td>
+                    <td class="font-numeric">$<%= Number(incident.cost || 0).toLocaleString('es-CO') %></td>
+                    <td>
+                      <span class="admin-pill <%= incident.status === 'Resuelto' ? 'admin-pill--success' : 'admin-pill--warning' %>">
+                        <%= incident.status %>
+                      </span>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  </div>
+  <script src="/js/admin-ui.js"></script>
+  <script src="/js/admin-support.js"></script>
+</body>
+</html>

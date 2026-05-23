@@ -8,55 +8,77 @@
   <script defer src="/vendor/chart.umd.min.js"></script>
   <script defer src="/js/charts.js"></script>
 </head>
-<body>
-  <%- include('shared/header', { active: 'analytics' }) %>
-  <main class="apple-shell">
-    <section class="section-heading">
-      <p class="eyebrow">Analytics</p>
-      <h1>Reportes obligatorios de valor y rotación</h1>
-    </section>
+<body class="admin-app">
+  <% const useAdminLayout = Boolean(isAdmin); %>
+  <% if (!useAdminLayout) { %>
+    <%- include('shared/header', { active: 'analytics' }) %>
+  <% } %>
+  <div class="admin-layout">
+    <input class="admin-nav-toggle" type="checkbox" id="admin-nav-toggle" aria-label="Abrir menu admin">
+    <%- include('shared/admin-sidebar', { active: 'analytics' }) %>
+    <div class="admin-panel">
+      <header class="admin-statusbar">
+        <label class="admin-toggle" for="admin-nav-toggle" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </label>
+        <div>
+          <p class="admin-statusbar__eyebrow">Panel Administrativo</p>
+          <h1>Analitica avanzada</h1>
+        </div>
+        <div class="admin-statusbar__actions">
+          <span class="admin-statusbar__user"><%= currentUser ? currentUser.name : 'Administrador' %></span>
+          <a class="btn-link btn-link--small" href="/admin">Dashboard</a>
+        </div>
+      </header>
 
-    <section class="card analytics-chart-card">
-      <div class="card-copy">
-        <h2>Valor del inventario por periodo</h2>
-        <p>Serie histórica agregada con visualización monocromática de bajo contraste.</p>
-      </div>
-      <canvas id="valuationChart" data-chart='<%- JSON.stringify(valuation) %>'></canvas>
-    </section>
+      <main class="admin-content">
+        <section class="admin-kpi-grid">
+          <article class="card admin-kpi"><span>Productos</span><strong><%= summary.total_products %></strong></article>
+          <article class="card admin-kpi"><span>Pedidos</span><strong><%= summary.total_orders %></strong></article>
+          <article class="card admin-kpi"><span>Usuarios</span><strong><%= summary.total_users %></strong></article>
+          <article class="card admin-kpi"><span>Ingresos</span><strong>$<%= Number(summary.total_revenue || 0).toLocaleString('es-CO') %></strong></article>
+        </section>
 
-    <section class="card analytics-table-card">
-      <div class="card-copy">
-        <h2>Matriz de rotación y salud</h2>
-        <p>Lectura compacta de transiciones y soporte por categoría.</p>
-      </div>
-      <div class="table-wrap">
-        <table class="apple-clean-table">
-          <thead>
-            <tr>
-              <th>Categoría</th>
-              <th>Unidades Totales</th>
-              <th>Ratio de Asignación</th>
-              <th>Costo de Soporte</th>
-              <th>Incidentes</th>
-              <th>Estado del Hardware</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% rotation.forEach((row) => { %>
-              <tr>
-                <td class="font-weight-medium"><%= row.categoria %></td>
-                <td><%= row.inventario_total %></td>
-                <td><%= row.ratio_asignacion_pct ?? 0 %>%</td>
-                <td class="font-numeric">$<%= Number(row.costo_total_soporte || 0).toLocaleString('es-CO') %> COP</td>
-                <td><%= row.cantidad_incidentes_historicos %></td>
-                <td><span class="badge badge-<%= row.estado_alerta === 'Saludable' ? 'success' : row.estado_alerta === 'Estable' ? 'warning' : 'danger' %>"><%= row.estado_alerta %></span></td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-  <%- include('shared/footer') %>
+        <section class="card analytics-chart-card">
+          <div class="card-copy">
+            <h2>Ingresos por periodo</h2>
+            <p>Serie histórica de ventas confirmadas.</p>
+          </div>
+          <canvas id="valuationChart" data-chart='<%- JSON.stringify(sales) %>'></canvas>
+          <canvas id="categoryChart" data-chart='<%- JSON.stringify(categoryMix) %>'></canvas>
+        </section>
+
+        <section class="card analytics-table-card">
+          <div class="card-copy">
+            <h2>Top productos</h2>
+            <p>Los productos con mayor ingreso acumulado.</p>
+          </div>
+          <div class="table-wrap">
+            <table class="apple-clean-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Categoria</th>
+                  <th>Unidades</th>
+                  <th>Ingresos</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% topProducts.forEach((row) => { %>
+                  <tr>
+                    <td class="font-weight-medium"><%= row.name %></td>
+                    <td><%= row.category %></td>
+                    <td><%= row.unidades %></td>
+                    <td class="font-numeric">$<%= Number(row.ingresos || 0).toLocaleString('es-CO') %> COP</td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
 </body>
 </html>
