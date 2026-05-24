@@ -154,7 +154,7 @@ async function createMaintenanceLog(log) {
       log.code,
       log.title,
       log.area || null,
-      log.maintenance_cost || 0.0,
+      log.maintenance_cost || 0,
       log.status || "Open",
       log.notes || null,
     ],

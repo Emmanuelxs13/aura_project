@@ -57,7 +57,7 @@
       <% products.forEach((product) => { %>
         <article class="card product-card product-card--<%= product.category.toLowerCase() %>" data-reveal>
           <div class="product-card__media">
-            <img loading="lazy" decoding="async" src="<%= product.image || ('/images/products/' + (product.slug || 'placeholder') + '.svg') %>" alt="<%= product.name %>" onerror="this.src='/images/placeholder.svg'" />
+            <img loading="lazy" decoding="async" src="<%= product.image || ('/images/products/' + (product.slug || 'placeholder') + '.svg') %>" alt="<%= product.name %>" />
           </div>
           <div class="product-card__body">
             <p class="device-card__meta"><%= product.category %> · <%= product.colorway %></p>

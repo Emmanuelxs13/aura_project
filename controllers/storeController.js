@@ -24,6 +24,12 @@ const ADMIN_ROLES = ["Admin", "Operador", "Auditor", "Administrator"];
 const USER_ROLES = [...ADMIN_ROLES, "Customer"];
 const USER_STATUSES = ["Active", "Suspended"];
 
+function handleNonFatalError(error) {
+  if (process.env.NODE_ENV !== "production") {
+    console.debug("[Aura admin] Non-fatal action error:", error);
+  }
+}
+
 function normalizeQuantity(value) {
   const quantity = Number.parseInt(String(value || "1"), 10);
   if (Number.isNaN(quantity) || quantity < 1) {
@@ -416,8 +422,8 @@ async function createAdminUser(req, res, next) {
         createdUser.id,
         JSON.stringify({ name, email, role, status }),
       );
-    } catch (e) {
-      // non-fatal
+    } catch (error) {
+      handleNonFatalError(error);
     }
     return res.redirect("/admin/users?created=1");
   } catch (error) {
@@ -446,8 +452,8 @@ async function changeAdminUserRole(req, res, next) {
         userId,
         JSON.stringify({ role }),
       );
-    } catch (e) {
-      // non-fatal
+    } catch (error) {
+      handleNonFatalError(error);
     }
     return res.redirect("/admin/users?updated=role");
   } catch (error) {
@@ -473,8 +479,8 @@ async function changeAdminUserStatus(req, res, next) {
         userId,
         JSON.stringify({ status }),
       );
-    } catch (e) {
-      // non-fatal
+    } catch (error) {
+      handleNonFatalError(error);
     }
     return res.redirect("/admin/users?updated=status");
   } catch (error) {
@@ -547,8 +553,8 @@ async function createDevice(req, res, next) {
         created.id,
         JSON.stringify(payload),
       );
-    } catch (e) {
-      // non-fatal
+    } catch (error) {
+      handleNonFatalError(error);
     }
     return res.redirect("/admin/devices?created=1");
   } catch (error) {
@@ -574,12 +580,13 @@ async function updateDeviceHandler(req, res, next) {
     if (req.body.specifications) {
       try {
         patch.specifications = JSON.parse(req.body.specifications);
-      } catch (e) {
+      } catch (error) {
         patch.specifications = req.body.specifications;
+        handleNonFatalError(error);
       }
     }
 
-    const updated = await deviceModel.updateDevice(id, patch);
+    await deviceModel.updateDevice(id, patch);
     try {
       await auditModel.logAction(
         req.session.user?.id,
@@ -588,8 +595,8 @@ async function updateDeviceHandler(req, res, next) {
         id,
         JSON.stringify(patch),
       );
-    } catch (e) {
-      // non-fatal
+    } catch (error) {
+      handleNonFatalError(error);
     }
     return res.redirect(`/admin/devices?updated=${id}`);
   } catch (error) {
@@ -660,7 +667,7 @@ async function assignDeviceHandler(req, res, next) {
       status: assignee ? "Assigned" : "Available",
     };
 
-    const updated = await deviceModel.updateDevice(deviceId, patch);
+    await deviceModel.updateDevice(deviceId, patch);
     try {
       await auditModel.logAction(
         req.session.user?.id,
@@ -669,7 +676,9 @@ async function assignDeviceHandler(req, res, next) {
         deviceId,
         JSON.stringify({ assigned_to: assignee }),
       );
-    } catch (e) {}
+    } catch (error) {
+      handleNonFatalError(error);
+    }
 
     return res.redirect(`/admin/devices?assigned=${deviceId}`);
   } catch (error) {
@@ -707,8 +716,8 @@ async function createDeviceLog(req, res, next) {
         createdLog.id,
         JSON.stringify(payload),
       );
-    } catch (e) {
-      // non-fatal
+    } catch (error) {
+      handleNonFatalError(error);
     }
     return res.redirect(`/admin/devices/${deviceId}/logs?created=1`);
   } catch (error) {
@@ -730,7 +739,7 @@ async function updateMaintenanceLogHandler(req, res, next) {
       if (req.body[key] !== undefined) patch[key] = req.body[key];
     }
 
-    const updated = await deviceModel.updateMaintenanceLog(logId, patch);
+    await deviceModel.updateMaintenanceLog(logId, patch);
     try {
       await auditModel.logAction(
         req.session.user?.id,
@@ -739,7 +748,9 @@ async function updateMaintenanceLogHandler(req, res, next) {
         logId,
         JSON.stringify(patch),
       );
-    } catch (e) {}
+    } catch (error) {
+      handleNonFatalError(error);
+    }
 
     return res.redirect(
       req.get("Referrer") || `/admin/support?updated=${logId}`,
@@ -764,7 +775,9 @@ async function deleteMaintenanceLogHandler(req, res, next) {
         logId,
         JSON.stringify(before || {}),
       );
-    } catch (e) {}
+    } catch (error) {
+      handleNonFatalError(error);
+    }
     return res.redirect(
       req.get("Referrer") || `/admin/support?deleted=${logId}`,
     );

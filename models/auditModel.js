@@ -20,19 +20,16 @@ async function logAction(actor_id, action, resource, resource_id, details) {
 
 async function list({ limit = 100, offset = 0, q = null } = {}) {
   const where = [];
-  const values = [];
+  const queryText = q && String(q).trim() ? String(q).trim() : null;
+  const values = queryText ? new Array(3).fill(`%${queryText}%`) : [];
 
-  if (q && String(q).trim()) {
-    values.push(`%${String(q).trim()}%`);
-    values.push(`%${String(q).trim()}%`);
-    values.push(`%${String(q).trim()}%`);
+  if (queryText) {
     where.push(
       `(a.action ILIKE $${values.length - 2} OR a.resource ILIKE $${values.length - 1} OR COALESCE(a.details::text, '') ILIKE $${values.length})`,
     );
   }
 
-  values.push(limit);
-  values.push(offset);
+  values.push(limit, offset);
 
   const sql = `
     SELECT a.id, a.actor_id, u.name AS actor_name, a.action, a.resource, a.resource_id, a.details, a.created_at
@@ -49,17 +46,16 @@ async function list({ limit = 100, offset = 0, q = null } = {}) {
 
 async function count({ q = null } = {}) {
   const where = [];
-  const values = [];
-  if (q && String(q).trim()) {
-    values.push(`%${String(q).trim()}%`);
-    values.push(`%${String(q).trim()}%`);
-    values.push(`%${String(q).trim()}%`);
+  const queryText = q && String(q).trim() ? String(q).trim() : null;
+  const values = queryText ? new Array(3).fill(`%${queryText}%`) : [];
+  if (queryText) {
     where.push(
       `(action ILIKE $${values.length - 2} OR resource ILIKE $${values.length - 1} OR COALESCE(details::text, '') ILIKE $${values.length})`,
     );
   }
 
-  const sql = `SELECT COUNT(*) AS total FROM audit_logs ${where.length ? `WHERE ${where.join(" AND ")}` : ""}`;
+  const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
+  const sql = `SELECT COUNT(*) AS total FROM audit_logs ${whereSql}`;
   const { rows } = await pool.query(sql, values);
   return Number(rows[0].total || 0);
 }

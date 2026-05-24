@@ -8,28 +8,37 @@
 </head>
 <body>
   <%- include('shared/header', { active: 'login' }) %>
-  <main class="apple-shell auth-shell">
-    <section class="hero hero--compact card">
+  <main class="apple-shell auth-shell auth-shell--login">
+    <section class="auth-hero card" data-reveal>
       <p class="eyebrow">Acceso seguro</p>
-      <h1>Inicia sesión para comprar y administrar Aura Store.</h1>
-      <p class="hero-copy">El flujo distingue clientes y administradores para desbloquear checkout, historial y panel de control.</p>
+      <h1>Entra a Aura con una interfaz más clara, rápida y premium.</h1>
+      <p class="hero-copy">Tu sesión separa clientes y administradores sin fricción. Todo queda listo para comprar, revisar pedidos o abrir el panel operativo.</p>
+      <div class="auth-points">
+        <span class="chip">Checkout protegido</span>
+        <span class="chip">Panel administrativo</span>
+        <span class="chip">Historial real</span>
+      </div>
     </section>
 
-    <section class="card auth-card">
+    <section class="card auth-card auth-card--login" data-reveal>
+      <div class="auth-card__header">
+        <p class="auth-card__eyebrow">Bienvenido de vuelta</p>
+        <h2>Acceso a clientes y equipo interno</h2>
+      </div>
       <form class="auth-form" method="post" action="/login">
         <input type="hidden" name="returnTo" value="<%= returnTo %>">
         <label>
           Correo electrónico
-          <input type="email" name="email" required placeholder="client@aura.co">
+          <input type="email" name="email" required placeholder="admin@aura.co">
         </label>
         <label>
           Contraseña
-          <input type="password" name="password" required placeholder="Client123!">
+          <input type="password" name="password" required placeholder="Admin123!">
         </label>
         <% if (error) { %>
           <p class="form-message form-message--error"><%= error %></p>
         <% } %>
-        <div class="device-form__actions">
+        <div class="device-form__actions auth-actions">
           <button class="btn-apple" type="submit">Entrar</button>
           <a class="btn-link" href="/">Volver al inicio</a>
         </div>

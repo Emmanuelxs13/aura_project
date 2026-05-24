@@ -22,14 +22,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (res.ok) {
           // simple UX: reload to reflect changes
-          window.location.reload();
+          globalThis.location.reload();
         } else {
           console.warn("Update failed", res.status);
-          window.location.reload();
+          globalThis.location.reload();
         }
       } catch (err) {
         console.error("Network error updating maintenance status", err);
-        window.location.reload();
+        globalThis.location.reload();
       }
     });
   });
@@ -39,24 +39,23 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('form[action*="/delete"]'),
   );
   deleteForms.forEach((f) => {
-    if (f.getAttribute("data-confirm-attached")) return;
-    f.setAttribute("data-confirm-attached", "1");
+    if (f.dataset.confirmAttached) return;
+    f.dataset.confirmAttached = "1";
     f.addEventListener("submit", async (ev) => {
       ev.preventDefault();
       const message =
-        f.getAttribute("data-confirm") ||
-        "¿Seguro que desea eliminar este registro?";
+        f.dataset.confirm || "¿Seguro que desea eliminar este registro?";
       try {
         if (
-          window.AuraAdminUI &&
-          typeof window.AuraAdminUI.showConfirm === "function"
+          globalThis.AuraAdminUI &&
+          typeof globalThis.AuraAdminUI.showConfirm === "function"
         ) {
-          const ok = await window.AuraAdminUI.showConfirm(message);
+          const ok = await globalThis.AuraAdminUI.showConfirm(message);
           if (ok) {
             f.submit();
           }
-        } else {
-          if (confirm(message)) f.submit();
+        } else if (confirm(message)) {
+          f.submit();
         }
       } catch (err) {
         console.error("Error mostrando confirm modal", err);

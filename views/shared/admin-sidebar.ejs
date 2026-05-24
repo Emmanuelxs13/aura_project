@@ -3,6 +3,15 @@
     <span class="admin-sidebar__badge">Aura Ops</span>
     <strong>Centro Ejecutivo</strong>
   </div>
+  <div class="admin-sidebar__quick-links">
+    <a href="/" class="admin-sidebar__link">Tienda</a>
+    <a href="/shop" class="admin-sidebar__link">Catálogo</a>
+    <a
+      href="/admin"
+      class="admin-sidebar__link <%= active === 'admin' ? 'is-active' : '' %>"
+      >Resumen</a
+    >
+  </div>
   <nav class="admin-sidebar__nav">
     <a
       href="/admin"

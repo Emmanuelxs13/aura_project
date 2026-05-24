@@ -40,20 +40,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const specs = deviceCreateForm.querySelector(
         'textarea[name="specifications"]',
       );
-      if (!model || !model.value.trim()) {
+      if (!model?.value?.trim()) {
         ev.preventDefault();
         showToast("El campo Modelo es obligatorio", "error");
         model.focus();
         return;
       }
-      if (specs && specs.value.trim()) {
+      if (specs?.value?.trim()) {
         try {
           JSON.parse(specs.value);
-        } catch (e) {
+        } catch {
           ev.preventDefault();
           showToast("Especificaciones debe ser JSON válido", "error");
           specs.focus();
-          return;
         }
       }
     });
@@ -69,20 +68,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const specs = deviceEditForm.querySelector(
         'textarea[name="specifications"]',
       );
-      if (model && !model.value.trim()) {
+      if (!model?.value?.trim()) {
         ev.preventDefault();
         showToast("El campo Modelo es obligatorio", "error");
         model.focus();
         return;
       }
-      if (specs && specs.value.trim()) {
+      if (specs?.value?.trim()) {
         try {
           JSON.parse(specs.value);
-        } catch (e) {
+        } catch {
           ev.preventDefault();
           showToast("Especificaciones debe ser JSON válido", "error");
           specs.focus();
-          return;
         }
       }
     });
@@ -99,7 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
         ev.preventDefault();
         showToast("El título de la incidencia es obligatorio", "error");
         title.focus();
-        return;
       }
     });
   });
@@ -180,5 +177,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  window.AuraAdminUI = { showToast, showConfirm };
+  globalThis.AuraAdminUI = { showToast, showConfirm };
 });

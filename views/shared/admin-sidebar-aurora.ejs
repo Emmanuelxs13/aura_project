@@ -53,10 +53,21 @@
         <%= currentUser ? currentUser.name : 'Administrador' %>
       </p>
     </div>
-    <form method="post" action="/logout">
-      <button class="admin-btn admin-btn--small admin-btn--ghost" type="submit">
-        Salir
-      </button>
-    </form>
+    <div class="admin-sidebar__footer-actions">
+      <a class="admin-btn admin-btn--small admin-btn--ghost" href="/">Tienda</a>
+      <a
+        class="admin-btn admin-btn--small admin-btn--ghost"
+        href="/admin/dashboard"
+        >Dashboard</a
+      >
+      <form method="post" action="/logout">
+        <button
+          class="admin-btn admin-btn--small admin-btn--ghost"
+          type="submit"
+        >
+          Salir
+        </button>
+      </form>
+    </div>
   </div>
 </aside>
