@@ -1,5 +1,18 @@
 const { pool } = require("../config/database");
 
+async function safeQuery(queryText, values = [], fallbackRows = []) {
+  try {
+    const { rows } = await pool.query(queryText, values);
+    return rows;
+  } catch (error) {
+    if (error.code === "42P01") {
+      return fallbackRows;
+    }
+
+    throw error;
+  }
+}
+
 function buildCatalogWhere({ category = "", featuredOnly = false } = {}) {
   const clauses = [];
   const values = [];
@@ -58,7 +71,7 @@ async function getProducts({
 }
 
 async function getFeaturedProducts(limit = 4) {
-  const { rows } = await pool.query(
+  const rows = await safeQuery(
     `
       SELECT id, name, slug, category, tagline, description, price, compare_at_price, stock, featured, colorway, specifications
       FROM products
@@ -213,7 +226,7 @@ function rankProducts(products, query, limit = products.length) {
 }
 
 async function getSuggestedProducts(query, limit = 6) {
-  const { rows } = await pool.query(
+  const rows = await safeQuery(
     `
       SELECT id, name, slug, category, tagline, description, price, compare_at_price, stock, featured, colorway, specifications, created_at
       FROM products
@@ -229,7 +242,7 @@ async function getSuggestedProducts(query, limit = 6) {
 }
 
 async function getProductBySlug(slug) {
-  const { rows } = await pool.query(
+  const rows = await safeQuery(
     `
       SELECT id, name, slug, category, tagline, description, price, compare_at_price, stock, featured, colorway, specifications, created_at
       FROM products
@@ -246,7 +259,7 @@ async function getProductsByIds(ids) {
     return [];
   }
 
-  const { rows } = await pool.query(
+  const rows = await safeQuery(
     `
       SELECT id, name, slug, category, tagline, description, price, compare_at_price, stock, featured, colorway, specifications
       FROM products
@@ -445,7 +458,8 @@ async function getOrdersByUser(userId) {
 }
 
 async function getStoreSummary() {
-  const { rows } = await pool.query(`
+  const rows = await safeQuery(
+    `
     SELECT
       (SELECT COUNT(*) FROM products) AS total_products,
       (SELECT COUNT(*) FROM users) AS total_users,
@@ -462,12 +476,24 @@ async function getStoreSummary() {
         ),
         0
       ) AS support_rate
-  `);
+  `,
+    [],
+    [
+      {
+        total_products: 0,
+        total_users: 0,
+        total_orders: 0,
+        total_revenue: 0,
+        total_stock: 0,
+        support_rate: 0,
+      },
+    ],
+  );
   return rows[0];
 }
 
 async function getRevenueByMonth() {
-  const { rows } = await pool.query(`
+  const rows = await safeQuery(`
     SELECT
       TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') AS periodo,
       COALESCE(SUM(total_amount), 0) AS valor_total,
@@ -480,7 +506,7 @@ async function getRevenueByMonth() {
 }
 
 async function getTopProducts() {
-  const { rows } = await pool.query(`
+  const rows = await safeQuery(`
     SELECT
       p.name,
       p.category,
@@ -496,7 +522,7 @@ async function getTopProducts() {
 }
 
 async function getCategoryMix() {
-  const { rows } = await pool.query(`
+  const rows = await safeQuery(`
     SELECT
       category,
       COUNT(*) AS total,
@@ -522,19 +548,19 @@ async function getAdminOverview() {
     getRevenueByMonth(),
     getTopProducts(),
     getCategoryMix(),
-    pool.query(`
+    safeQuery(`
       SELECT id, status, total_amount, shipping_name, created_at
       FROM orders
       ORDER BY created_at DESC, id DESC
       LIMIT 8
     `),
-    pool.query(`
+    safeQuery(`
       SELECT id, name, category, price, stock, featured, created_at
       FROM products
       ORDER BY featured DESC, created_at DESC, id DESC
       LIMIT 8
     `),
-    pool.query(`
+    safeQuery(`
       SELECT id, name, email, role, created_at
       FROM users
       ORDER BY created_at DESC, id DESC
@@ -543,19 +569,19 @@ async function getAdminOverview() {
   ]);
 
   const recentActivity = [
-    ...recentOrders.rows.map((order) => ({
+    ...recentOrders.map((order) => ({
       actor: order.shipping_name || "Cliente",
       action: `registro pedido #${order.id}`,
       area: "Operaciones",
       created_at: order.created_at,
     })),
-    ...recentProducts.rows.map((product) => ({
+    ...recentProducts.map((product) => ({
       actor: "Catalogo",
       action: `actualizo ${product.name}`,
       area: "Inventario",
       created_at: product.created_at,
     })),
-    ...users.rows.map((user) => ({
+    ...users.map((user) => ({
       actor: user.name,
       action: `cambio rol a ${user.role}`,
       area: "Usuarios",
@@ -573,9 +599,9 @@ async function getAdminOverview() {
     revenue,
     topProducts,
     categoryMix,
-    recentOrders: recentOrders.rows,
-    recentProducts: recentProducts.rows,
-    users: users.rows,
+    recentOrders,
+    recentProducts,
+    users,
     recentActivity,
   };
 }

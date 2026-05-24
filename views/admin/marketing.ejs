@@ -1,0 +1,67 @@
+<%- include('../shared/admin-head', { pageTitle: pageTitle, bodyClass: 'admin-marketing' }) %>
+<div class="admin-layout">
+  <%- include('../shared/admin-sidebar-aurora', { active: 'marketing' }) %>
+  <main class="admin-content">
+    <header class="admin-topbar admin-reveal" data-reveal>
+      <div>
+        <p class="admin-breadcrumb">Marketing Aura</p>
+        <h1 class="admin-title">Automatización de correos y ads</h1>
+        <p class="admin-subtitle">Controla campañas, anuncios y secuencias de correo con copy de alta intención y tono premium.</p>
+      </div>
+      <div class="admin-actions">
+        <button class="admin-btn admin-btn--ghost" type="button">Programar envío</button>
+        <button class="admin-btn" type="button">Guardar campaña</button>
+      </div>
+    </header>
+
+    <section class="admin-chart-grid" data-reveal>
+      <article class="admin-form-card">
+        <div class="admin-section-heading">
+          <p class="admin-label">Ads 1</p>
+          <h2>Copy para Facebook / Instagram</h2>
+        </div>
+        <div class="admin-form-grid">
+          <div class="admin-field"><label class="admin-form-label">Titular</label><input class="admin-input" value="<%= campaigns.ads[0].title %>" /></div>
+          <div class="admin-field"><label class="admin-form-label">Texto</label><textarea class="admin-textarea"><%= campaigns.ads[0].body %></textarea></div>
+        </div>
+      </article>
+
+      <article class="admin-form-card">
+        <div class="admin-section-heading">
+          <p class="admin-label">Ads 2</p>
+          <h2>Beneficio y urgencia</h2>
+        </div>
+        <div class="admin-form-grid">
+          <div class="admin-field"><label class="admin-form-label">Titular</label><input class="admin-input" value="<%= campaigns.ads[1].title %>" /></div>
+          <div class="admin-field"><label class="admin-form-label">Texto</label><textarea class="admin-textarea"><%= campaigns.ads[1].body %></textarea></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="admin-copy-grid" data-reveal>
+      <article class="admin-copy-card">
+        <div class="admin-section-heading">
+          <p class="admin-label">Email de bienvenida</p>
+          <h2><%= campaigns.welcomeEmail.subject %></h2>
+        </div>
+        <div class="admin-form-grid">
+          <div class="admin-field"><label class="admin-form-label">Asunto</label><input class="admin-input" value="<%= campaigns.welcomeEmail.subject %>" /></div>
+          <div class="admin-field"><label class="admin-form-label">Cuerpo</label><textarea class="admin-textarea"><%= campaigns.welcomeEmail.body %></textarea></div>
+        </div>
+      </article>
+
+      <article class="admin-copy-card">
+        <div class="admin-section-heading">
+          <p class="admin-label">Email de carrito abandonado</p>
+          <h2><%= campaigns.cartEmail.subject %></h2>
+        </div>
+        <div class="admin-form-grid">
+          <div class="admin-field"><label class="admin-form-label">Asunto</label><input class="admin-input" value="<%= campaigns.cartEmail.subject %>" /></div>
+          <div class="admin-field"><label class="admin-form-label">Cuerpo</label><textarea class="admin-textarea"><%= campaigns.cartEmail.body %></textarea></div>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>
+</body>
+</html>

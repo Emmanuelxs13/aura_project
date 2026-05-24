@@ -30,40 +30,40 @@
           <span></span>
         </label>
         <div>
-          <p class="admin-statusbar__eyebrow">Panel Administrativo</p>
-          <h1>Dashboard Global</h1>
+          <p class="admin-statusbar__eyebrow">Centro Ejecutivo</p>
+          <h1>Control de acceso y activos</h1>
         </div>
         <div class="admin-statusbar__actions">
           <span class="admin-statusbar__user"><%= currentUser ? currentUser.name : 'Administrador' %></span>
-          <a class="btn-link btn-link--small" href="/analytics">Analytics</a>
+          <a class="btn-link btn-link--small" href="/analytics">Vista analítica</a>
         </div>
       </header>
 
       <main class="admin-content">
-        <section class="admin-kpi-grid">
+        <section class="admin-kpi-grid" data-reveal>
           <article class="card admin-kpi">
-            <span>Total Activos</span>
+            <span>Activos bajo control</span>
             <strong><%= overview.summary.total_products %></strong>
           </article>
           <article class="card admin-kpi">
-            <span>Usuarios Activos</span>
+            <span>Cuentas operativas</span>
             <strong><%= overview.summary.total_users %></strong>
           </article>
           <article class="card admin-kpi">
-            <span>Presupuesto Invertido</span>
+            <span>Valor operativo</span>
             <strong>$<%= Number(overview.summary.total_revenue || 0).toLocaleString('es-CO') %></strong>
           </article>
           <article class="card admin-kpi">
-            <span>Tasa en Soporte</span>
+            <span>Incidencias activas</span>
             <strong><%= Number(overview.summary.support_rate || 12) %>%</strong>
           </article>
         </section>
 
-        <section class="admin-analytics">
+        <section class="admin-analytics" data-reveal>
           <article class="card admin-chart">
             <div class="card-copy">
-              <h2>Crecimiento historico</h2>
-              <p>Proyeccion mensual de activos y presupuesto ejecutado.</p>
+              <h2>Ritmo operativo</h2>
+              <p>Evolución de activos y valor ejecutado por mes.</p>
             </div>
             <div class="admin-chart__frame">
               <canvas
@@ -75,8 +75,8 @@
           </article>
           <article class="card admin-chart">
             <div class="card-copy">
-              <h2>Distribucion por categorias</h2>
-              <p>Detalle de inventario, soporte y asignaciones clave.</p>
+              <h2>Composición de inventario</h2>
+              <p>Detalle de categorías, soporte y asignaciones críticas.</p>
             </div>
             <div class="admin-chart__frame">
               <canvas
@@ -88,10 +88,10 @@
           </article>
         </section>
 
-        <section class="card admin-activity">
+        <section class="card admin-activity" data-reveal>
           <div class="card-copy">
-            <h2>Actividad reciente</h2>
-            <p>Ultimas acciones operativas dentro del sistema.</p>
+            <h2>Trazabilidad reciente</h2>
+            <p>Últimos movimientos del ecosistema Aura.</p>
           </div>
           <div class="table-wrap">
             <table class="apple-clean-table">

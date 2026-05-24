@@ -1,43 +1,43 @@
 <aside class="admin-sidebar" aria-label="Navegacion administrativa">
   <div class="admin-sidebar__brand">
-    <span class="admin-sidebar__badge">Admin</span>
-    <strong>Aura Console</strong>
+    <span class="admin-sidebar__badge">Aura Ops</span>
+    <strong>Centro Ejecutivo</strong>
   </div>
   <nav class="admin-sidebar__nav">
     <a
       href="/admin"
       class="admin-sidebar__link <%= active === 'admin' ? 'is-active' : '' %>"
-      >Dashboard Global</a
+      >Control Ejecutivo</a
     >
     <a
       href="/admin/users"
       class="admin-sidebar__link <%= active === 'users' ? 'is-active' : '' %>"
-      >Gestion de Usuarios</a
+      >Control de Acceso y Roles Operacionales</a
     >
     <a
       href="/admin/inventory"
       class="admin-sidebar__link <%= active === 'inventory' ? 'is-active' : '' %>"
-      >Control de Inventario (Productos)</a
+      >Seguimiento de Activos Premium</a
     >
     <a
       href="/admin/devices"
       class="admin-sidebar__link <%= active === 'devices' ? 'is-active' : '' %>"
-      >Activos (Dispositivos)</a
+      >Rastreo de Dispositivos</a
     >
     <a
       href="/admin/support"
       class="admin-sidebar__link <%= active === 'support' ? 'is-active' : '' %>"
-      >Mantenimiento y Soporte</a
+      >Soporte Operativo</a
     >
     <a
       href="/admin/audit"
       class="admin-sidebar__link <%= active === 'audit' ? 'is-active' : '' %>"
-      >Registro de Auditoría</a
+      >Trazabilidad y Auditoría</a
     >
     <a
       href="/admin/settings"
       class="admin-sidebar__link <%= active === 'settings' ? 'is-active' : '' %>"
-      >Configuracion del Sistema</a
+      >Configuración de Plataforma</a
     >
   </nav>
   <div class="admin-sidebar__footer">
@@ -52,3 +52,4 @@
     </form>
   </div>
 </aside>
+<script defer src="/js/lazy-reveal.js"></script>

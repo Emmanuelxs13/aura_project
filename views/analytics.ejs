@@ -23,35 +23,35 @@
           <span></span>
         </label>
         <div>
-          <p class="admin-statusbar__eyebrow">Panel Administrativo</p>
-          <h1>Analitica avanzada</h1>
+          <p class="admin-statusbar__eyebrow">Centro Ejecutivo</p>
+          <h1>Lectura analítica del negocio</h1>
         </div>
         <div class="admin-statusbar__actions">
           <span class="admin-statusbar__user"><%= currentUser ? currentUser.name : 'Administrador' %></span>
-          <a class="btn-link btn-link--small" href="/admin">Dashboard</a>
+          <a class="btn-link btn-link--small" href="/admin">Control ejecutivo</a>
         </div>
       </header>
 
       <main class="admin-content">
-        <section class="admin-kpi-grid">
-          <article class="card admin-kpi"><span>Productos</span><strong><%= summary.total_products %></strong></article>
+        <section class="admin-kpi-grid" data-reveal>
+          <article class="card admin-kpi"><span>Activos</span><strong><%= summary.total_products %></strong></article>
           <article class="card admin-kpi"><span>Pedidos</span><strong><%= summary.total_orders %></strong></article>
-          <article class="card admin-kpi"><span>Usuarios</span><strong><%= summary.total_users %></strong></article>
-          <article class="card admin-kpi"><span>Ingresos</span><strong>$<%= Number(summary.total_revenue || 0).toLocaleString('es-CO') %></strong></article>
+          <article class="card admin-kpi"><span>Cuentas</span><strong><%= summary.total_users %></strong></article>
+          <article class="card admin-kpi"><span>Valor</span><strong>$<%= Number(summary.total_revenue || 0).toLocaleString('es-CO') %></strong></article>
         </section>
 
-        <section class="card analytics-chart-card">
+        <section class="card analytics-chart-card" data-reveal>
           <div class="card-copy">
-            <h2>Ingresos por periodo</h2>
+            <h2>Ritmo de ingresos</h2>
             <p>Serie histórica de ventas confirmadas.</p>
           </div>
           <canvas id="valuationChart" data-chart='<%- JSON.stringify(sales) %>'></canvas>
           <canvas id="categoryChart" data-chart='<%- JSON.stringify(categoryMix) %>'></canvas>
         </section>
 
-        <section class="card analytics-table-card">
+        <section class="card analytics-table-card" data-reveal>
           <div class="card-copy">
-            <h2>Top productos</h2>
+            <h2>Activos con mayor retorno</h2>
             <p>Los productos con mayor ingreso acumulado.</p>
           </div>
           <div class="table-wrap">

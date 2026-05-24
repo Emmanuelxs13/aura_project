@@ -21,8 +21,8 @@
           <span></span>
         </label>
         <div>
-          <p class="admin-statusbar__eyebrow">Panel Administrativo</p>
-          <h1>Mantenimiento y soporte</h1>
+          <p class="admin-statusbar__eyebrow">Centro Ejecutivo</p>
+          <h1>Soporte operativo y continuidad</h1>
         </div>
         <div class="admin-statusbar__actions">
           <span class="admin-statusbar__user"><%= currentUser ? currentUser.name : 'Administrador' %></span>
@@ -31,7 +31,7 @@
       </header>
 
       <main class="admin-content">
-        <section class="admin-kpi-grid">
+        <section class="admin-kpi-grid" data-reveal>
           <article class="card admin-kpi">
             <span>Incidencias abiertas</span>
             <strong><%= incidents.filter((item) => item.status !== 'Resuelto').length %></strong>
@@ -46,11 +46,11 @@
           </article>
         </section>
 
-        <section class="card admin-activity">
+        <section class="card admin-activity" data-reveal>
           <div class="card-copy admin-toolbar">
             <div>
-              <h2>Registro de incidencias</h2>
-              <p>Seguimiento detallado de costos y tiempos de resolucion.</p>
+              <h2>Registro de soporte</h2>
+              <p>Seguimiento detallado de costos y tiempos de resolución.</p>
             </div>
             <div class="admin-toolbar__actions">
               <button class="btn-link" type="button">Exportar reporte</button>

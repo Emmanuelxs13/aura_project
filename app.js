@@ -17,6 +17,10 @@ const {
   checkout,
   renderDashboard,
   renderAdmin,
+  renderAdminDashboardV2,
+  renderAdminCatalog,
+  renderAdminCmsLanding,
+  renderAdminMarketing,
   renderAdminUsers,
   renderAdminInventory,
   renderAdminDevices,
@@ -93,7 +97,11 @@ app.get("/product/:slug", renderProductDetail);
 app.get("/cart", renderCart);
 app.get("/dashboard", requireAuth, renderDashboard);
 app.get("/account", requireAuth, renderDashboard);
-app.get("/admin", requireAdmin, renderAdmin);
+app.get("/admin", requireAdmin, (req, res) => res.redirect("/admin/dashboard"));
+app.get("/admin/dashboard", requireAdmin, renderAdminDashboardV2);
+app.get("/admin/catalog", requireAdmin, renderAdminCatalog);
+app.get("/admin/cms-landing", requireAdmin, renderAdminCmsLanding);
+app.get("/admin/marketing", requireAdmin, renderAdminMarketing);
 app.get("/admin/users", requireAdmin, renderAdminUsers);
 app.get("/admin/inventory", requireAdmin, renderAdminInventory);
 app.get("/admin/devices", requireAdmin, renderAdminDevices);

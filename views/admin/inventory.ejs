@@ -21,8 +21,8 @@
           <span></span>
         </label>
         <div>
-          <p class="admin-statusbar__eyebrow">Panel Administrativo</p>
-          <h1>Control de inventario</h1>
+          <p class="admin-statusbar__eyebrow">Centro Ejecutivo</p>
+          <h1>Seguimiento de activos premium</h1>
         </div>
         <div class="admin-statusbar__actions">
           <span class="admin-statusbar__user"><%= currentUser ? currentUser.name : 'Administrador' %></span>
@@ -31,9 +31,9 @@
       </header>
 
       <main class="admin-content">
-        <section class="admin-kpi-grid">
+        <section class="admin-kpi-grid" data-reveal>
           <article class="card admin-kpi">
-            <span>Activos totales</span>
+            <span>Activos visibles</span>
             <strong><%= summary.total_products %></strong>
           </article>
           <article class="card admin-kpi">
@@ -41,15 +41,15 @@
             <strong><%= summary.total_stock %></strong>
           </article>
           <article class="card admin-kpi">
-            <span>Categorias activas</span>
+            <span>Categorías activas</span>
             <strong><%= [...new Set(inventory.map((item) => item.category))].length %></strong>
           </article>
         </section>
 
-        <section class="card admin-activity">
+        <section class="card admin-activity" data-reveal>
           <div class="card-copy admin-toolbar">
             <div>
-              <h2>Inventario operativo</h2>
+              <h2>Inventario estratégico</h2>
               <p>CRUD de activos, asignaciones y disponibilidad.</p>
             </div>
             <div class="admin-toolbar__actions">
@@ -98,10 +98,10 @@
           </div>
         </section>
 
-        <section class="card admin-activity">
+        <section class="card admin-activity" data-reveal>
           <div class="card-copy admin-toolbar">
             <div>
-              <h2>Activos (Dispositivos)</h2>
+              <h2>Dispositivos en campo</h2>
               <p>Lista de dispositivos físicos y su estado.</p>
             </div>
           </div>

@@ -10,18 +10,18 @@
 <body>
   <%- include('../shared/header', { active: 'shop' }) %>
   <main class="apple-shell">
-    <section class="section-heading">
-      <p class="eyebrow">Tienda</p>
-      <h1>Catalogo completo inspirado en Apple</h1>
-      <p class="subtitle">Explora productos, filtra por categoria y agrega unidades a la bolsa.</p>
+    <section class="section-heading" data-reveal>
+      <p class="eyebrow">Tienda Aura</p>
+      <h1>Catálogo operativo de hardware</h1>
+      <p class="subtitle">Explora productos, filtra por categoría y agrega unidades a la bolsa.</p>
       <% if (category) { %>
         <p class="subtitle">Filtro activo: <%= category %></p>
       <% } %>
     </section>
 
-    <section class="shop-toolbar card">
+    <section class="shop-toolbar card" data-reveal>
       <form class="shop-toolbar__search" method="get" action="/shop">
-          <input id="catalogSearchInput" type="text" name="search" value="<%= search %>" placeholder="Buscar iPhone, Mac, AirPods..." aria-label="Buscar productos">
+          <input id="catalogSearchInput" type="text" name="search" value="<%= search %>" placeholder="Buscar Mac, iPhone, accesorios..." aria-label="Buscar productos">
         <button class="btn-apple" type="submit">Buscar</button>
       </form>
         <div
@@ -42,29 +42,34 @@
       </div>
     </section>
 
-    <section class="shop-summary">
-      <p class="subtitle"><strong><%= products.length %></strong> productos en catalogo</p>
+    <section class="shop-summary" data-reveal>
+      <p class="subtitle"><strong><%= products.length %></strong> productos disponibles</p>
       <div class="shop-summary__meta">
         <% if (search) { %>
           Resultados para "<%= search %>"
         <% } else { %>
-          Coleccion completa con disponibilidad en tiempo real
+          Colección completa con disponibilidad en tiempo real
         <% } %>
       </div>
     </section>
 
     <section class="grid grid--cards">
       <% products.forEach((product) => { %>
-        <article class="card product-card product-card--<%= product.category.toLowerCase() %>">
-          <p class="device-card__meta"><%= product.category %> · <%= product.colorway %></p>
-          <h2><a href="/product/<%= product.slug %>"><%= product.name %></a></h2>
-          <p class="subtitle"><%= product.tagline %></p>
-          <p class="font-numeric">$<%= Number(product.price).toLocaleString('es-CO') %> COP</p>
-          <form method="post" action="/cart/items" class="product-card__actions">
-            <input type="hidden" name="productId" value="<%= product.id %>">
-            <input type="hidden" name="quantity" value="1">
-            <button class="btn-link" type="submit">Agregar a la bolsa</button>
-          </form>
+        <article class="card product-card product-card--<%= product.category.toLowerCase() %>" data-reveal>
+          <div class="product-card__media">
+            <img loading="lazy" decoding="async" src="<%= product.image || ('/images/products/' + (product.slug || 'placeholder') + '.svg') %>" alt="<%= product.name %>" onerror="this.src='/images/placeholder.svg'" />
+          </div>
+          <div class="product-card__body">
+            <p class="device-card__meta"><%= product.category %> · <%= product.colorway %></p>
+            <h2><a href="/product/<%= product.slug %>"><%= product.name %></a></h2>
+            <p class="subtitle"><%= product.tagline %></p>
+            <p class="font-numeric">$<%= Number(product.price).toLocaleString('es-CO') %> COP</p>
+            <form method="post" action="/cart/items" class="product-card__actions">
+              <input type="hidden" name="productId" value="<%= product.id %>">
+              <input type="hidden" name="quantity" value="1">
+              <button class="btn-link" type="submit">Agregar a la bolsa</button>
+            </form>
+          </div>
         </article>
       <% }) %>
     </section>

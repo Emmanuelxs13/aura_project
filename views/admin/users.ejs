@@ -22,17 +22,17 @@
           <span></span>
         </label>
         <div>
-          <p class="admin-statusbar__eyebrow">Panel Administrativo</p>
-          <h1>Gestion de usuarios</h1>
+          <p class="admin-statusbar__eyebrow">Centro Ejecutivo</p>
+          <h1>Control de acceso y roles operacionales</h1>
         </div>
         <div class="admin-statusbar__actions">
           <span class="admin-statusbar__user"><%= currentUser ? currentUser.name : 'Administrador' %></span>
-          <button class="btn-apple" type="button">Nuevo usuario</button>
+          <button class="btn-apple" type="button">Nuevo acceso</button>
         </div>
       </header>
 
       <main class="admin-content">
-        <section class="admin-kpi-grid">
+        <section class="admin-kpi-grid" data-reveal>
           <article class="card admin-kpi">
             <span>Usuarios totales</span>
             <strong><%= summary.total_users %></strong>
@@ -51,10 +51,10 @@
           </article>
         </section>
 
-        <section class="card admin-user-form">
+        <section class="card admin-user-form" data-reveal>
           <div class="card-copy">
-            <h2>Alta de usuario</h2>
-            <p>Crear cuentas nuevas y asignar rol operativo.</p>
+            <h2>Alta operativa</h2>
+            <p>Crear cuentas nuevas y asignar permisos con claridad.</p>
           </div>
           <form class="admin-form-grid" method="post" action="/admin/users">
             <label>Nombre
@@ -84,11 +84,11 @@
           </form>
         </section>
 
-        <section class="card admin-activity">
+        <section class="card admin-activity" data-reveal>
           <div class="card-copy admin-toolbar">
             <div>
-              <h2>Directorio operativo</h2>
-              <p>Administra roles, suspensiones y acceso global.</p>
+              <h2>Base de acceso y roles</h2>
+              <p>Administra permisos, suspensiones y visibilidad global.</p>
             </div>
             <div class="admin-toolbar__actions">
               <button class="btn-link" type="button">Exportar</button>

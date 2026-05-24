@@ -27,7 +27,7 @@
 <body>
   <%- include('shared/header', { active: 'shop' }) %>
   <main class="apple-shell product-shell">
-    <section class="product-hero card product-hero--<%= product.category.toLowerCase() %>">
+    <section class="product-hero card product-hero--<%= product.category.toLowerCase() %>" data-reveal>
       <div class="product-hero__content">
         <p class="eyebrow"><%= product.category %> · <%= product.colorway %></p>
         <h1><%= product.name %></h1>
@@ -52,9 +52,9 @@
       </div>
     </section>
 
-    <section class="grid product-detail-grid">
+    <section class="grid product-detail-grid" data-reveal>
       <article class="card product-spec-card">
-        <h2>Especificaciones</h2>
+        <h2>Especificaciones del activo</h2>
         <div class="spec-grid">
           <% Object.entries(product.specifications || {}).forEach(([key, value]) => { %>
             <div class="spec-item">
@@ -66,7 +66,7 @@
       </article>
 
       <article class="card product-spec-card">
-        <h2>Disponibilidad</h2>
+        <h2>Disponibilidad operativa</h2>
         <p class="subtitle">Stock actual: <strong><%= product.stock %></strong></p>
         <p class="subtitle">Precio: <strong>$<%= Number(product.price).toLocaleString('es-CO') %> COP</strong></p>
         <% if (product.compare_at_price) { %>
@@ -75,13 +75,13 @@
       </article>
     </section>
 
-    <section class="section-heading">
+    <section class="section-heading" data-reveal>
       <p class="eyebrow">Recomendados</p>
-      <h2>Completa tu experiencia</h2>
+      <h2>Completa tu operación</h2>
     </section>
     <section class="grid grid--cards">
       <% recommendations.forEach((item) => { %>
-        <article class="card product-card product-card--compact">
+        <article class="card product-card product-card--compact" data-reveal>
           <p class="device-card__meta"><%= item.category %></p>
           <h2><a href="/product/<%= item.slug %>"><%= item.name %></a></h2>
           <p class="subtitle"><%= item.tagline %></p>

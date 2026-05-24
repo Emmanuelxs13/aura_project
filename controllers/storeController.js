@@ -877,6 +877,135 @@ async function renderAdminSettings(req, res, next) {
   }
 }
 
+async function renderAdminDashboardV2(req, res, next) {
+  try {
+    const overview = await getAdminOverview();
+    const summary = overview.summary || {};
+
+    res.render("admin/dashboard", {
+      overview,
+      summary,
+      pageTitle: "Dashboard Ejecutivo | Aura Admin",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function renderAdminCatalog(req, res, next) {
+  try {
+    const [summary, inventory] = await Promise.all([
+      getStoreSummary(),
+      getAdminInventory(),
+    ]);
+
+    const collectionCounts = inventory.reduce((accumulator, item) => {
+      const category = String(item.category || "").trim();
+      if (!category) {
+        return accumulator;
+      }
+      accumulator[category] = (accumulator[category] || 0) + 1;
+      return accumulator;
+    }, {});
+
+    const productStar = {
+      name: "ASUS ROG Strix G16 RTX 4070 Intel i9 32GB RAM 1TB SSD",
+      priceCurrent: 2499,
+      priceBefore: 2899,
+      stockNotice: "Solo quedan 5 unidades disponibles",
+      badges: ["🔥 Más vendido", "⚡ Oferta limitada", "🚀 Envío gratis"],
+      specs: [
+        ["Procesador", "Intel Core i9"],
+        ["GPU", "NVIDIA RTX 4070"],
+        ["Memoria", "32GB DDR5"],
+        ["Almacenamiento", "1TB SSD NVMe"],
+        ["Pantalla", '16" 240Hz'],
+        ["Conectividad", "Wi-Fi 6E · Thunderbolt · USB-C"],
+      ],
+    };
+
+    res.render("admin/catalog", {
+      summary,
+      inventory,
+      collectionCounts,
+      productStar,
+      pageTitle: "Catálogo | Aura Admin",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function renderAdminCmsLanding(req, res, next) {
+  try {
+    const landingBlocks = {
+      hero: {
+        title: "Tecnología que eleva tu universo digital",
+        subtitle:
+          "Aura Store reúne hardware, diseño y velocidad en una experiencia clara y premium.",
+      },
+      benefits: ["Envíos rápidos", "Pagos protegidos", "Garantía oficial"],
+      formula: {
+        problem: "Comprar tecnología se siente disperso y lento.",
+        solution: "Aura centraliza catálogo, soporte y checkout.",
+        benefit: "La decisión se vuelve clara y segura.",
+        result: "Más conversión y mejor ticket promedio.",
+      },
+      categories: [
+        "Laptops",
+        "Smartphones",
+        "Gaming",
+        "Accesorios",
+        "Smart Home",
+      ],
+      brand: "Compra con claridad. Vende con precisión. Escala con Aura.",
+      newsletter:
+        "Recibe lanzamientos, acceso anticipado y ofertas seleccionadas.",
+    };
+
+    res.render("admin/cms-landing", {
+      landingBlocks,
+      pageTitle: "CMS Landing | Aura Admin",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function renderAdminMarketing(req, res, next) {
+  try {
+    const campaigns = {
+      ads: [
+        {
+          label: "Facebook / Instagram Ads 1",
+          title: "Tu próximo setup empieza aquí",
+          body: "Hardware premium, entrega rápida y una experiencia de compra tan precisa como tu próximo upgrade.",
+        },
+        {
+          label: "Facebook / Instagram Ads 2",
+          title: "Potencia real para trabajo y gaming",
+          body: "Descubre equipos que combinan diseño limpio, rendimiento y confianza operativa en un solo lugar.",
+        },
+      ],
+      welcomeEmail: {
+        subject: "Bienvenido a Aura Store 🚀",
+        body: "Hola, gracias por unirte a Aura. Aquí encontrarás hardware premium, soporte claro y una experiencia pensada para decidir rápido.",
+      },
+      cartEmail: {
+        subject: "Tu próximo setup todavía te está esperando 👀",
+        body: "Todavía puedes retomar tu compra. Tu carrito sigue disponible con la configuración que elegiste y un equipo listo para enviarse.",
+      },
+    };
+
+    res.render("admin/marketing", {
+      campaigns,
+      pageTitle: "Marketing | Aura Admin",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function createProduct(req, res, next) {
   try {
     const product = req.body || {};
@@ -903,6 +1032,10 @@ module.exports = {
   renderAdminInventory,
   renderAdminSupport,
   renderAdminSettings,
+  renderAdminDashboardV2,
+  renderAdminCatalog,
+  renderAdminCmsLanding,
+  renderAdminMarketing,
   renderAdminDevices,
   createDevice,
   updateDeviceHandler,
