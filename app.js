@@ -55,6 +55,28 @@ async function start() {
   }
 }
 
+function splitSQL(sql) {
+  const statements = [];
+  let current = "";
+  let inString = false;
+
+  for (let i = 0; i < sql.length; i++) {
+    const c = sql[i];
+    const prev = i > 0 ? sql[i - 1] : "";
+    if (c === "'" && prev !== "\\") inString = !inString;
+    if (c === ";" && !inString) {
+      const trimmed = current.trim();
+      if (trimmed && !trimmed.startsWith("--")) statements.push(trimmed);
+      current = "";
+    } else {
+      current += c;
+    }
+  }
+  const last = current.trim();
+  if (last && !last.startsWith("--")) statements.push(last);
+  return statements;
+}
+
 function listenWithFallback(initialPort, retries = 5) {
   return new Promise((resolve, reject) => {
     const server = app.listen(initialPort);
@@ -96,10 +118,17 @@ async function bootstrapDatabase() {
 
   if (allTablesReady) return;
 
-  const schemaPath = path.join(__dirname, "db", "backup.sql");
+  const schemaPath = path.join(__dirname, "db", "schema.sql");
   const schemaSql = fs.readFileSync(schemaPath, "utf8");
-  await pool.query(schemaSql);
-  console.log("Database schema bootstrapped from backup.sql");
+  const statements = splitSQL(schemaSql);
+  for (const stmt of statements) {
+    try {
+      await pool.query(stmt);
+    } catch (err) {
+      console.error(`Schema statement failed (skipping): ${err.message}`);
+    }
+  }
+  console.log("Database schema bootstrapped from schema.sql");
 }
 
 start();

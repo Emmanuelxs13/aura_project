@@ -7,7 +7,7 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { login, isAdmin } = useAuth()
+  const { login } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -15,8 +15,9 @@ export default function Login() {
     setError('')
     setLoading(true)
     try {
-      await login(email, password)
-      navigate(isAdmin ? '/admin' : '/')
+      const data = await login(email, password)
+      const adminRoles = ['Administrator', 'Admin', 'Operador', 'Auditor']
+      navigate(adminRoles.includes(data.user.role) ? '/admin' : '/')
     } catch (err) {
       setError(err.response?.data?.error || 'Error al iniciar sesion')
     } finally {
@@ -79,6 +80,26 @@ export default function Login() {
                 Registrate aqui
               </Link>
             </p>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-dashed border-gray-200">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider text-center mb-3">Cuentas de prueba</p>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg">
+                <div>
+                  <span className="font-semibold text-gray-700">Admin</span>
+                  <p className="text-gray-400 font-mono">admin@aura.co</p>
+                </div>
+                <code className="bg-white px-2 py-1 rounded border border-gray-200 text-gray-600 font-mono">admin123</code>
+              </div>
+              <div className="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg">
+                <div>
+                  <span className="font-semibold text-gray-700">Cliente</span>
+                  <p className="text-gray-400 font-mono">client@aura.co</p>
+                </div>
+                <code className="bg-white px-2 py-1 rounded border border-gray-200 text-gray-600 font-mono">client123</code>
+              </div>
+            </div>
           </div>
         </div>
       </div>

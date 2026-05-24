@@ -15,9 +15,5 @@ export default function AdminRoute({ children }) {
   if (!user) return <Navigate to="/login" replace />
   if (!isAdmin) return <Navigate to="/" replace />
 
-  return (
-    <div className="flex min-h-screen bg-gray-100">
-      {children}
-    </div>
-  )
+  return children
 }

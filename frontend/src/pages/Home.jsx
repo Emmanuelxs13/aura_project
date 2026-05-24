@@ -2,128 +2,130 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { products as productsApi } from '../services/api'
 import ProductCard from '../components/ProductCard'
+import { useCart } from '../context/CartContext'
+import { useToast } from '../context/ToastContext'
 
-const heroImages = [
-  {
-    title: 'iPhone 16 Pro',
-    subtitle: 'Titanio. Potencia. Pro.',
-    desc: 'El iPhone mas avanzado con camara profesional, bateria de larga duracion y chip A18 Pro.',
-    category: 'iPhone',
-    bg: 'from-accent/20 to-secondary/20',
-  },
-  {
-    title: 'MacBook Pro M4',
-    subtitle: 'Potencia sin limites.',
-    desc: 'Workstation en un formato compacto. Chip M4 Pro, pantalla Liquid Retina XDR y bateria para todo el dia.',
-    category: 'Mac',
-    bg: 'from-secondary/20 to-accent/10',
-  },
-  {
-    title: 'iPad Pro M4',
-    subtitle: 'Ultra-delgado. Ultra-capaz.',
-    desc: 'El lienzo definitivo para creadores con chip M4, pantalla OLED y soporte para Apple Pencil.',
-    category: 'iPad',
-    bg: 'from-accent/10 to-secondary/30',
-  },
-]
-
-const categories = [
-  { name: 'Celulares', slug: '/celulares', icon: 'M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z', color: 'bg-accent/10 text-accent' },
-  { name: 'Laptops', slug: '/laptops', icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', color: 'bg-secondary/10 text-secondary' },
-  { name: 'Accesorios', slug: '/accesorios', icon: 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4', color: 'bg-accent/10 text-accent' },
+const categoryHeroes = [
+  { slug: 'iphone-16-pro', category: 'iPhone', label: 'Celulares', gradient: 'from-blue-600 via-blue-500 to-accent' },
+  { slug: 'macbook-pro-14-m4-pro', category: 'Mac', label: 'Laptops', gradient: 'from-gray-800 via-gray-700 to-gray-600' },
+  { slug: 'ipad-pro-13-m4', category: 'iPad', label: 'Tablets', gradient: 'from-purple-600 via-purple-500 to-accent' },
 ]
 
 export default function Home() {
   const [featured, setFeatured] = useState([])
-  const [heroIndex, setHeroIndex] = useState(0)
+  const [categories, setCategories] = useState([])
+  const [heroIdx, setHeroIdx] = useState(0)
   const [loading, setLoading] = useState(true)
+  const { addItem } = useCart()
+  const { show } = useToast()
 
   useEffect(() => {
-    productsApi.getFeatured()
-      .then(({ data }) => setFeatured(data.products))
-      .catch(() => {})
-      .finally(() => setLoading(false))
+    Promise.all([
+      productsApi.getFeatured(),
+      productsApi.getCategories(),
+    ]).then(([feat, cats]) => {
+      setFeatured(feat.data.products)
+      setCategories(cats.data.categories)
+    }).catch(() => {})
+    .finally(() => setLoading(false))
   }, [])
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setHeroIndex(prev => (prev + 1) % heroImages.length)
-    }, 6000)
-    return () => clearInterval(timer)
+    const t = setInterval(() => setHeroIdx(i => (i + 1) % categoryHeroes.length), 5000)
+    return () => clearInterval(t)
   }, [])
 
-  const hero = heroImages[heroIndex]
+  const hero = categoryHeroes[heroIdx]
+
+  const quickAdd = async (slug) => {
+    try {
+      const { data } = await productsApi.getBySlug(slug)
+      addItem(data.product)
+      show(`${data.product.name} agregado al carrito`, 'success')
+    } catch { show('Error al agregar producto', 'error') }
+  }
 
   return (
     <div>
-      <section className={`relative bg-gradient-to-br ${hero.bg} overflow-hidden`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-          <div className="max-w-2xl">
-            <span className="inline-block px-4 py-1.5 bg-white/80 rounded-full text-sm font-medium text-accent mb-6">
-              {hero.category}
+      {/* Hero Section */}
+      <section className={`relative bg-gradient-to-br ${hero.gradient} overflow-hidden`}>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+          <div className="max-w-3xl">
+            <span className="inline-flex items-center px-4 py-1.5 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium text-white mb-6">
+              {hero.label}
             </span>
-            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-4 leading-tight">
-              {hero.title}
+            <h1 className="text-5xl md:text-7xl font-black text-white mb-4 leading-[1.1] tracking-tight">
+              Tecnologia Premium
+              <br />
+              <span className="text-white/80">al mejor precio</span>
             </h1>
-            <p className="text-2xl md:text-3xl font-semibold text-accent mb-6">
-              {hero.subtitle}
+            <p className="text-xl text-white/70 mb-8 max-w-xl leading-relaxed">
+              Productos originales, envio rapido y soporte especializado. La mejor experiencia de compra en tecnologia.
             </p>
-            <p className="text-lg text-gray-600 mb-8 max-w-lg">
-              {hero.desc}
-            </p>
-            <div className="flex space-x-4">
-              <Link to={`/product/iphone-16-pro`} className="btn-primary text-lg px-8 py-4">
-                Comprar ahora
-              </Link>
-              <Link to="/celulares" className="btn-outline text-lg px-8 py-4">
-                Ver mas
+            <div className="flex flex-wrap gap-4">
+              <button onClick={() => quickAdd(hero.slug)} className="bg-white text-gray-900 hover:bg-gray-100 font-bold py-4 px-8 rounded-xl transition-all duration-200 hover:shadow-2xl text-lg">
+                Comprar {hero.label === 'Celulares' ? 'iPhone' : hero.label === 'Laptops' ? 'MacBook' : 'iPad'}
+              </button>
+              <Link to={`/${hero.label.toLowerCase()}`} className="bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 font-semibold py-4 px-8 rounded-xl transition-all duration-200 border border-white/20 text-lg">
+                Ver catalogo
               </Link>
             </div>
           </div>
         </div>
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2">
-          {heroImages.map((_, i) => (
-            <button key={i} onClick={() => setHeroIndex(i)}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${i === heroIndex ? 'bg-accent w-8' : 'bg-gray-400'}`}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2.5">
+          {categoryHeroes.map((_, i) => (
+            <button key={i} onClick={() => setHeroIdx(i)}
+              className={`h-2 rounded-full transition-all duration-500 ${i === heroIdx ? 'w-10 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'}`}
             />
           ))}
         </div>
       </section>
 
-      <section className="py-16 bg-white">
+      {/* Category Grid */}
+      <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {categories.map(cat => (
-              <Link key={cat.name} to={cat.slug}
-                className="flex items-center space-x-4 p-6 rounded-xl border-2 border-gray-100 hover:border-accent transition-all duration-300 group">
-                <div className={`p-4 rounded-xl ${cat.color} group-hover:scale-110 transition-transform`}>
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={cat.icon} />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800">{cat.name}</h3>
-                  <p className="text-sm text-gray-500">Ver coleccion &rarr;</p>
-                </div>
-              </Link>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link to="/celulares" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 p-8 min-h-[180px] flex flex-col justify-end">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+              <h3 className="text-2xl font-bold text-white relative z-10">Celulares</h3>
+              <p className="text-white/70 text-sm relative z-10 mt-1">iPhone 16 Pro y mas</p>
+            </Link>
+            <Link to="/laptops" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-700 to-gray-900 p-8 min-h-[180px] flex flex-col justify-end">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+              <h3 className="text-2xl font-bold text-white relative z-10">Laptops</h3>
+              <p className="text-white/70 text-sm relative z-10 mt-1">MacBook Pro & Air</p>
+            </Link>
+            <Link to="/accesorios" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 p-8 min-h-[180px] flex flex-col justify-end">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+              <h3 className="text-2xl font-bold text-white relative z-10">Accesorios</h3>
+              <p className="text-white/70 text-sm relative z-10 mt-1">AirPods, Watch y mas</p>
+            </Link>
           </div>
         </div>
       </section>
 
+      {/* Featured Products */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="section-title">Productos Destacados</h2>
-            <p className="section-subtitle">Lo mejor de la tecnologia premium en un solo lugar</p>
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">Productos Destacados</h2>
+              <p className="text-gray-400 mt-2">Lo mas vendido de la temporada</p>
+            </div>
+            <Link to="/celulares" className="hidden sm:inline-flex text-sm font-semibold text-accent hover:text-accent-dark transition-colors">
+              Ver todo &rarr;
+            </Link>
           </div>
           {loading ? (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-accent border-t-transparent" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="rounded-2xl bg-gray-100 animate-pulse h-[380px]" />
+              ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featured.map(product => (
+              {featured.slice(0, 8).map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
@@ -131,36 +133,47 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-accent/5">
+      {/* Stats */}
+      <section className="py-16 bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="p-8">
-              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                </svg>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { value: categories.reduce((s, c) => s + c.count, 0) || '26+', label: 'Productos' },
+              { value: '24-48', label: 'Horas de envio' },
+              { value: '100%', label: 'Originales' },
+              { value: '12', label: 'Meses de garantia' },
+            ].map(s => (
+              <div key={s.label}>
+                <p className="text-3xl md:text-4xl font-black text-accent">{s.value}</p>
+                <p className="text-sm text-gray-400 mt-1">{s.label}</p>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Productos Originales</h3>
-              <p className="text-gray-500 text-sm">Garantia oficial y sellados de fabrica. Solo productos 100% originales.</p>
-            </div>
-            <div className="p-8">
-              <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Envio Relampago</h3>
-              <p className="text-gray-500 text-sm">Entregas en 24-48 horas en ciudades principales. Seguimiento en tiempo real.</p>
-            </div>
-            <div className="p-8">
-              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Soporte Premium</h3>
-              <p className="text-gray-500 text-sm">Asesoria tecnica especializada. Soporte post-venta de primer nivel.</p>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Categories with counts */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">Categorias</h2>
+            <p className="text-gray-400 mt-2">Explora nuestra coleccion completa</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {['iPhone', 'Mac', 'iPad', 'Audio', 'Displays', 'Accessories'].map(cat => {
+              const c = categories.find(c => c.category === cat)
+              const count = c?.count || 0
+              return (
+                <Link key={cat} to={`/${cat === 'iPhone' ? 'celulares' : cat === 'Mac' ? 'laptops' : 'accesorios'}`}
+                  className="p-6 rounded-2xl border-2 border-gray-100 hover:border-accent hover:bg-accent/5 transition-all duration-200 text-center group">
+                  <p className="text-2xl font-black text-gray-900 group-hover:text-accent transition-colors">{count}</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {cat === 'iPhone' ? 'Celulares' : cat === 'Mac' ? 'Laptops' : cat}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">productos</p>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>

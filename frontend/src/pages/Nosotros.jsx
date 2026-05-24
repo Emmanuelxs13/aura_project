@@ -57,8 +57,8 @@ export default function Nosotros() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="section-title">Nuestro Equipo</h2>
-            <p className="section-subtitle">Conoce a las personas detras de Aura Store</p>
+            <h2 className="text-3xl font-bold text-gray-900">Nuestro Equipo</h2>
+            <p className="text-gray-500 mt-2 max-w-xl mx-auto">Conoce a las personas detras de Aura Store</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
