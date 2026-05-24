@@ -239,4 +239,4 @@ curl http://localhost:3000/api/health
 ```
 
 ## Licencia
-Proyecto academico - Universidad Tecnologica.
+Proyecto academico - Juan Esteban Correa - Andres - Emmanuel Berrio
