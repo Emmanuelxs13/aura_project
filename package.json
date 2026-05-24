@@ -1,19 +1,24 @@
 {
-  "name": "aura-project",
-  "version": "1.0.0",
-  "description": "Sistema MVC SSR con PostgreSQL y analitica para inventario premium.",
+  "name": "aura-store",
+  "version": "2.0.0",
+  "description": "Aura Store - E-commerce with React + Tailwind + Express REST API",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd frontend && npm install",
+    "build": "cd frontend && npm run build",
     "migrate": "node scripts/migrate.js"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "chart.js": "^4.5.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "ejs": "^3.1.10",
     "express": "^4.21.2",
-    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1"
   },
   "devDependencies": {
