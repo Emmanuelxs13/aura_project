@@ -16,11 +16,11 @@ export default function Register() {
     setError('')
 
     if (form.password !== form.confirm) {
-      setError('Las contrasenas no coinciden')
+      setError('Las contraseñas no coinciden')
       return
     }
     if (form.password.length < 6) {
-      setError('La contrasena debe tener al menos 6 caracteres')
+      setError('La contraseña debe tener al menos 6 caracteres')
       return
     }
 
@@ -67,17 +67,17 @@ export default function Register() {
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Contrasena
+                Contraseña
               </label>
               <input id="password" name="password" type="password" required value={form.password} onChange={handleChange}
                 className="input-field" placeholder="Minimo 6 caracteres" />
             </div>
             <div>
               <label htmlFor="confirm" className="block text-sm font-medium text-gray-700 mb-1">
-                Confirmar contrasena
+                Confirmar contraseña
               </label>
               <input id="confirm" name="confirm" type="password" required value={form.confirm} onChange={handleChange}
-                className="input-field" placeholder="Repite la contrasena" />
+                className="input-field" placeholder="Repite la contraseña" />
             </div>
             <button type="submit" disabled={loading} className="btn-primary w-full">
               {loading ? 'Creando cuenta...' : 'Crear cuenta'}

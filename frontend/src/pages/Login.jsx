@@ -57,7 +57,7 @@ export default function Login() {
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Contrasena
+                Contraseña
               </label>
               <input
                 id="password"
@@ -66,7 +66,7 @@ export default function Login() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 className="input-field"
-                placeholder="Tu contrasena"
+                placeholder="Tu contraseña"
               />
             </div>
             <button type="submit" disabled={loading} className="btn-primary w-full">
